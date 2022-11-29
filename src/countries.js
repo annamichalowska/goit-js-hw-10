@@ -1,10 +1,3 @@
-import './css/styles.css';
-import { fetchCountries } from './fetchCountries.js';
-import debounce from 'lodash.debounce';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
-
-const DEBOUNCE_DELAY = 300;
-
 const getUrl = name =>
   `https://restcountries.com/v2/name/${name}?fields=name,capital,population,flags,languages`;
 
@@ -91,7 +84,7 @@ const fetchCountries = name => {
     });
 };
 
-//fetchCountries('Poland');
+// fetchCountries("Poland");
 
 const input = document.querySelector('input#search');
 
