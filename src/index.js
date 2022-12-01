@@ -9,121 +9,54 @@ const inputCountry = document.getElementById('search-box');
 const listCountry = document.querySelector('.country-list');
 const infoCountry = document.querySelector('.country-info');
 
-
-
-const resetMarkup = () => {
-  result.innerHTML = '';
-};
-
-const fetchCountries = name => {
-  const parsedName = name.trim();
-  if (parsedName.length === 0) return;
-
-  const url = getUrl(parsedName);
-  return fetch(url)
-    .then(res => {
-      if (!res.ok) throw new Error('No countries for such query!');
-
-      return res.json();
-    })
-    .then(countries => {
-      console.log(countries);
-      if (countries.length > 10)
-        return displayAlert('Too many countries found. Be more specific!');
-      if (countries.length === 1) return displayCountryCard(countries[0]);
-      return displayCountriesList(countries);
-    })
-    .catch(error => {
-      console.error(error);
-      displayAlert(error.message, 'error');
-    });
-};
-
-
-
-
-
-const displayAlert = (msg, mode = 'info') => {
-  const toast = document.createElement('div');
-  toast.classList.add('toast');
-  if (['info', 'error'].includes(mode)) toast.classList.add(mode);
-
-  toast.textContent = msg;
-
-  resetResult();
-  result.append(toast);
-};
-
-const displayCountryCard = ({
-  flags,
-  name,
-  capital,
-  population,
-  languages,
-}) => {
-  const card = document.createElement('artcile');
-  const parsedLangs = languages.map(lang => lang.name).join(', ');
-
-  card.innerHTML = `
-  <h3>
-    <img src="${flags.svg}" alt="${name} flag" width="50px" />
-    ${name}
-  </h3>
-  <div>Capital: ${capital}</div>
-  <div>Population: ${population}</div>
-  <div>Languages: ${parsedLangs}</div>
-  `;
-
-  resetResult();
-  result.append(card);
-};
-
-const displayCountriesList = countries => {
-  const countryItems = countries.map(({ flags, name }) => {
-    const item = document.createElement('article');
-
-    item.innerHTML = `
-    <h3>
-      <img src="${flags.svg}" alt="${name} flag" width="50px" />
-      ${name}
-    </h3>`;
-
-    return item;
-  });
-
-  resetResult();
-  result.append(...countryItems);
-};
-
-const fetchCountries = name => {
-  const parsedName = name.trim();
-  if (parsedName.length === 0) return;
-
-  const url = getUrl(parsedName);
-  return fetch(url)
-    .then(res => {
-      if (!res.ok) throw new Error('No countries for such query!');
-
-      return res.json();
-    })
-    .then(countries => {
-      console.log(countries);
-      if (countries.length > 10)
-        return displayAlert('Too many countries found. Be more specific!');
-      if (countries.length === 1) return displayCountryCard(countries[0]);
-      return displayCountriesList(countries);
-    })
-    .catch(error => {
-      console.error(error);
-      displayAlert(error.message, 'error');
-    });
-};
-
-//fetchCountries('Poland');
-
-const input = document.querySelector('input#search');
-
-input.addEventListener(
+inputCountry.addEventListener(
   'input',
-  _.debounce(event => fetchCountries(event.target.value), 300)
+  debounce(countryInInput, DEBOUNCE_DELAY)
 );
+
+function countryInInput() {
+  const text = inputCountry.value.trim();
+  if (text === '') {
+    return (listCountry.innerHTML = ''), (infoCountry.innerHTML = '');
+  }
+
+  fetchCountries(text)
+    .then(countries => {
+      listCountry.innerHTML = '';
+      infoCountry.innerHTML = '';
+      if (countries.length === 1) {
+        listCountry.insertAdjacentHTML('beforeend', renderlistCountry(text));
+        infoCountry.insertAdjacentHTML('beforeend', renderInfoCountry(text));
+      } else if (text.length >= 10) {
+        Notify.info(
+          'Too many matches found. Please enter a more specific name'
+        );
+        return;
+      } else {
+        listCountry.insertAdjacentHTML('beforeend', renderlistCountry(text));
+      }
+    })
+    .catch(Notify.failure('Oops, there is no country with that name'));
+}
+
+function renderlistCountry(text) {
+  const markup = text
+    .map(({ name, flags }) => {
+      return `<li><img src="${flags.png}" alt="${name.official}" width="60" height="40">${name.official}</li>`;
+    })
+    .join('');
+}
+
+function renderInfoCountry(text) {
+  const markup = text
+    .map(({ name, capital, population, flags, languages }) => {
+      return `<h1><img src="${flags.png}" alt="${
+        name.official
+      }" width="40" height="40">${name.official}</h1>
+      <p>Capital: ${capital}</p>
+      <p>Population: ${population}</p>
+      <p>Languages: ${Object.values(languages)}</p>`;
+    })
+    .join('');
+  return markup;
+}
