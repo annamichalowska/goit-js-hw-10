@@ -14,49 +14,60 @@ inputCountry.addEventListener(
   debounce(countryInInput, DEBOUNCE_DELAY)
 );
 
+const cleanMarkup = ref => (ref.innerHTML = '');
+
 function countryInInput() {
-  const text = inputCountry.value.trim();
-  if (text === '') {
+  const countries = inputCountry.value.trim();
+  if (countries === '') {
     return (listCountry.innerHTML = ''), (infoCountry.innerHTML = '');
   }
 
-  fetchCountries(text)
-    .then(countries => {
-      listCountry.innerHTML = '';
-      infoCountry.innerHTML = '';
-      if (countries.length === 1) {
-        listCountry.insertAdjacentHTML('beforeend', renderlistCountry(text));
-        infoCountry.insertAdjacentHTML('beforeend', renderInfoCountry(text));
-      } else if (text.length >= 10) {
+  fetchCountries(countries)
+    .then(text => {
+      console.log(text);
+      if (text.length > 10) {
         Notify.info(
           'Too many matches found. Please enter a more specific name'
         );
         return;
-      } else {
-        listCountry.insertAdjacentHTML('beforeend', renderlistCountry(text));
       }
+      renderMarkup(text);
     })
-    .catch(Notify.failure('Oops, there is no country with that name'));
+    .catch(err => {
+      cleanMarkup(listCountry);
+      cleanMarkup(infoCountry);
+      Notify.failure('Oops, there is no country with that name');
+    });
 }
 
-function renderlistCountry(text) {
-  const markup = text
-    .map(({ name, flags }) => {
-      return `<li><img src="${flags.png}" alt="${name.official}" width="60" height="40">${name.official}</li>`;
-    })
+const renderMarkup = text => {
+  if (text.length === 1) {
+    cleanMarkup(listCountry);
+    const markupInfo = renderInfoCountry(text);
+    infoCountry.innerHTML = markupInfo;
+  } else {
+    cleanMarkup(inputCountry);
+    const markupList = renderListCountry(text);
+    listCountry.innerHTML = markupList;
+  }
+};
+
+const renderListCountry = text => {
+  return text
+    .map(
+      ({ name, flags }) =>
+        `<li><img src="${flags.png}" alt="${name.official}" width="60" height="40">${name.official}</li>`
+    )
     .join('');
-}
+};
 
-function renderInfoCountry(text) {
-  const markup = text
-    .map(({ name, capital, population, flags, languages }) => {
-      return `<h1><img src="${flags.png}" alt="${
-        name.official
-      }" width="40" height="40">${name.official}</h1>
+const renderInfoCountry = text => {
+  return text.map(
+    ({ name, capital, population, flags, languages }) => `<h1><img src="${
+      flags.png
+    }" alt="${name.official}" width="40" height="40">${name.official}</h1>
       <p>Capital: ${capital}</p>
       <p>Population: ${population}</p>
-      <p>Languages: ${Object.values(languages)}</p>`;
-    })
-    .join('');
-  return markup;
-}
+      <p>Languages: ${Object.values(languages)}</p>`
+  );
+};
