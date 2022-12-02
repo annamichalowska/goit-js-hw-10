@@ -14,8 +14,6 @@ inputCountry.addEventListener(
   debounce(countryInInput, DEBOUNCE_DELAY)
 );
 
-const cleanMarkup = ref => (ref.innerHTML = '');
-
 function countryInInput() {
   const countries = inputCountry.value.trim();
   if (countries === '') {
@@ -24,7 +22,6 @@ function countryInInput() {
 
   fetchCountries(countries)
     .then(text => {
-      console.log(text);
       if (text.length > 10) {
         Notify.info(
           'Too many matches found. Please enter a more specific name'
@@ -34,19 +31,19 @@ function countryInInput() {
       renderMarkup(text);
     })
     .catch(err => {
-      cleanMarkup(listCountry);
-      cleanMarkup(infoCountry);
+      listCountry.innerHTML = '';
+      infoCountry.innerHTML = '';
       Notify.failure('Oops, there is no country with that name');
     });
 }
 
 const renderMarkup = text => {
   if (text.length === 1) {
-    cleanMarkup(listCountry);
+    listCountry.innerHTML = '';
     const markupInfo = renderInfoCountry(text);
     infoCountry.innerHTML = markupInfo;
   } else {
-    cleanMarkup(inputCountry);
+    inputCountry.innerHTML = '';
     const markupList = renderListCountry(text);
     listCountry.innerHTML = markupList;
   }
