@@ -53,7 +53,7 @@ const renderListCountry = text => {
   return text
     .map(
       ({ name, flags }) =>
-        `<li><img src="${flags.png}" alt="${name.official}" width="60" height="40">${name.official}</li>`
+        `<li><img src="${flags.png}" alt="${name.common}" width="60" height="40">${name.common}</li>`
     )
     .join('');
 };
@@ -62,9 +62,9 @@ const renderInfoCountry = text => {
   return text.map(
     ({ name, capital, population, flags, languages }) => `<h1><img src="${
       flags.png
-    }" alt="${name.official}" width="40" height="40">${name.official}</h1>
+    }" alt="${name.common}" width="40" height="40">${name.common}</h1>
       <p>Capital: ${capital}</p>
       <p>Population: ${population}</p>
-      <p>Languages: ${Object.values(languages)}</p>`
+      <p>Languages: ${Object.values(languages).join(', ')} </p>`
   );
 };
