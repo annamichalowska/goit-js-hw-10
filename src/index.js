@@ -18,23 +18,25 @@ function countryInInput() {
   const countries = inputCountry.value.trim();
   if (countries === '') {
     return (listCountry.innerHTML = ''), (infoCountry.innerHTML = '');
+  } else if (isNaN(countries) === false) {
+    Notify.failure('It is a number, not country name');
+  } else {
+    fetchCountries(countries)
+      .then(text => {
+        if (text.length > 10) {
+          Notify.info(
+            'Too many matches found. Please enter a more specific name'
+          );
+          return;
+        }
+        renderMarkup(text);
+      })
+      .catch(err => {
+        listCountry.innerHTML = '';
+        infoCountry.innerHTML = '';
+        Notify.failure('Oops, there is no country with that name');
+      });
   }
-
-  fetchCountries(countries)
-    .then(text => {
-      if (text.length > 10) {
-        Notify.info(
-          'Too many matches found. Please enter a more specific name'
-        );
-        return;
-      }
-      renderMarkup(text);
-    })
-    .catch(err => {
-      listCountry.innerHTML = '';
-      infoCountry.innerHTML = '';
-      Notify.failure('Oops, there is no country with that name');
-    });
 }
 
 const renderMarkup = text => {
