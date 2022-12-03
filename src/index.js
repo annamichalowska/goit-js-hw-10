@@ -65,8 +65,8 @@ const renderInfoCountry = text => {
     ({ name, capital, population, flags, languages }) => `<h1><img src="${
       flags.png
     }" alt="${name.common}" width="40" height="40">${name.common}</h1>
-      <p>Capital: ${capital}</p>
-      <p>Population: ${population}</p>
-      <p>Languages: ${Object.values(languages).join(', ')} </p>`
+      <p><b>Capital:</b> ${capital}</p>
+      <p><b>Population:</b> ${population}</p>
+      <p><b>Languages:</b> ${Object.values(languages).join(', ')} </p>`
   );
 };
