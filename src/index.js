@@ -8,6 +8,7 @@ const DEBOUNCE_DELAY = 300;
 const inputCountry = document.getElementById('search-box');
 const listCountry = document.querySelector('.country-list');
 const infoCountry = document.querySelector('.country-info');
+const linkCountry = document.getElementById('link-country');
 
 inputCountry.addEventListener(
   'input',
@@ -56,7 +57,7 @@ const renderListCountry = text => {
   return text
     .map(
       ({ name, flags }) =>
-        `<li><img src="${flags.png}" alt="${name.common}" width="60" height="40">${name.common}</li>`
+        `<li><img src="${flags.png}" alt="${name.common}" width="60" height="40"><a href="#" id=link-country>${name.common}</a></li>`
     )
     .join('');
 };
@@ -71,3 +72,9 @@ const renderInfoCountry = text => {
       <p><b>Languages:</b> ${Object.values(languages).join(', ')} </p>`
   );
 };
+
+linkCountry.addEventListener('click', text => {
+  listCountry.innerHTML = '';
+  const markupInfo = renderInfoCountry(text);
+  infoCountry.innerHTML = markupInfo;
+});
