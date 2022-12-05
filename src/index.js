@@ -16,11 +16,11 @@ inputCountry.addEventListener(
 
 function countryInInput() {
   const countries = inputCountry.value.trim();
-  var RegExpression = /^[a-zA-Z\s]*$/;
+  var RegExpression = /^[a-zA-Z\s\-]*$/;
   if (countries === '') {
     return (listCountry.innerHTML = ''), (infoCountry.innerHTML = '');
   } else if (!RegExpression.test(countries)) {
-    Notify.failure('Please use only letters and spaces');
+    Notify.failure('Please use only letters, spaces and "-"');
   } else {
     fetchCountries(countries)
       .then(text => {
