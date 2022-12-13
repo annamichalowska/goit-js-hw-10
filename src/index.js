@@ -8,7 +8,7 @@ const DEBOUNCE_DELAY = 300;
 const inputCountry = document.getElementById('search-box');
 const listCountry = document.querySelector('.country-list');
 const infoCountry = document.querySelector('.country-info');
-const linkCountry = document.getElementById('link-country');
+//const linkCountry = document.getElementById('link-country');
 
 inputCountry.addEventListener(
   'input',
@@ -73,8 +73,9 @@ const renderInfoCountry = text => {
   );
 };
 
-linkCountry.addEventListener('click', text => {
-  listCountry.innerHTML = '';
-  const markupInfo = renderInfoCountry(text);
-  infoCountry.innerHTML = markupInfo;
+listCountry.addEventListener('click', event => {
+  const countryFromLink = event.target.innerHTML;
+  fetchCountries(countryFromLink).then(text => {
+    renderMarkup(text);
+  });
 });
