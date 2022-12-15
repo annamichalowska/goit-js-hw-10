@@ -50,6 +50,13 @@ const renderMarkup = text => {
     inputCountry.innerHTML = '';
     const markupList = renderListCountry(text);
     listCountry.innerHTML = markupList;
+    listCountry.addEventListener('click', event => {
+      const countryFromLink = event.target.innerHTML;
+      listCountry.innerHTML = '';
+      fetchCountries(countryFromLink).then(text => {
+        renderMarkup(text);
+      });
+    });
   }
 };
 
@@ -72,10 +79,3 @@ const renderInfoCountry = text => {
       <p><b>Languages:</b> ${Object.values(languages).join(', ')} </p>`
   );
 };
-
-listCountry.addEventListener('click', event => {
-  const countryFromLink = event.target.innerHTML;
-  fetchCountries(countryFromLink).then(text => {
-    renderMarkup(text);
-  });
-});
