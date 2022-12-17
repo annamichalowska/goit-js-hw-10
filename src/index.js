@@ -53,9 +53,10 @@ const renderMarkup = text => {
     listCountry.addEventListener('click', event => {
       const countryFromLink = event.target.innerHTML;
       listCountry.innerHTML = '';
-      fetchCountries(countryFromLink).then(text => {
-        renderMarkup(text);
-      });
+      markupInfo = renderInfoCountry(
+        text.filter(data => data.name.common === event.target.innerHTML)
+      );
+      infoCountry.innerHTML = markupInfo;
     });
   }
 };
