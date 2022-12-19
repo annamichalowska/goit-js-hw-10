@@ -42,9 +42,10 @@ function countryInInput() {
 }
 
 const renderMarkup = text => {
+  let markupInfo;
   if (text.length === 1) {
     listCountry.innerHTML = '';
-    const markupInfo = renderInfoCountry(text);
+    markupInfo = renderInfoCountry(text);
     infoCountry.innerHTML = markupInfo;
   } else {
     inputCountry.innerHTML = '';
